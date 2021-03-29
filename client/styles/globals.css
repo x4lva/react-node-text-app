@@ -65,8 +65,130 @@ form a{
   cursor: pointer;
 }
 .app-section{
-  padding: 10px 10px;
+  padding: 15px;
   margin-top: 10px;
   background: #ffffff;
   border-radius: 4px;
+  height: 100%;
+}
+.notes-list-item{
+  min-height: 220px;
+  width: 15%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.section-header {
+  font-family: Inter, serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 22px;
+}
+
+.notes-list-item.shadow {
+  border-radius: 4px;
+}
+
+.notes-list-item-title {
+  font-family: Inter, serif;
+  font-weight: 600;
+}
+.notes-list-date{
+  padding-bottom: 5px;
+}
+.section-header {
+  font-family: Inter;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 22px;
+}
+
+.notes-list-item {
+  border-radius: 4px;
+  padding: 15px 20px;
+  background: #000;
+  transition: .5s;
+  color: #fff;
+}
+
+.notes-list-item-title {
+  font-family: 'Inter';
+  font-weight: 600;
+}
+.notes-list-item-description {
+  color: #6c757d;
+}
+.node-list-item-add-icon{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #000000;
+  font-size: 17px;
+}
+.add-icon-container{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.notes-list-item:hover {
+  background: #333;
+  cursor: pointer;
+}
+textarea{
+  resize: none !important;
+}
+.notes-tabs-item{
+  color: #000000;
+  background: transparent;
+  border: none;
+  outline: none;
+  position: relative;
+}
+.notes-tabs-item.active::after{
+  margin-bottom: 5px;
+  background: #000000;
+  height: 2px;
+  position: absolute;
+  content: "";
+  width: 100%;
+  left: 0;
+  bottom: -8px;
+}
+
+.notes-tabs-item.active{
+  font-weight: 600;
+}
+.tab-empty{
+  height: 215px !important;
+}
+.tab-empty-icon {
+  background: #000;
+  width: 60px;
+  height: 60px;
+  text-align: center;
+  align-items: center;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  font-size: 29px;
+}
+
+.tab-empty-text {
+  font-size: 17px;
+  margin-top: 14px;
+  color: #333333;
+}
+.app-textarea{
+  border: none !important;
+
+}
+.app-textarea:focus{
+  border: none !important;
+  box-shadow: none !important;
 }

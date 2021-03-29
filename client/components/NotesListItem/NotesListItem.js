@@ -2,15 +2,17 @@ import React from 'react';
 
 function NotesListItem(props) {
     return (
-        <div className="notes-list-item">
-            <div className="notes-list-item-title">
-                {props.note.title}
-            </div>
+        <div className="notes-list-item shadow">
             <div className="notes-list-item-content">
-                {props.note.content}
+                <div className="notes-list-item-title">
+                    Project plan
+                </div>
+                <div className="notes-list-item-description">
+                    Create modern react app using apollo
+                </div>
             </div>
             <div className="notes-list-date">
-                {props.note}
+                19 minutes ago
             </div>
         </div>
     );
