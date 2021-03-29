@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link'
 
 function AppIndex(props) {
     return (
@@ -9,10 +10,14 @@ function AppIndex(props) {
                         <div id="navbarNav">
                             <ul className="navbar-nav">
                                 <li className="nav-item">
-                                    <button className="btn text-light me-2">Sign in</button>
+                                    <Link href="/login">
+                                        <button className="btn text-light me-2">Sign in</button>
+                                    </Link>
                                 </li>
                                 <li className="nav-item">
-                                    <button className="btn btn-outline-light">Sign up</button>
+                                    <Link href="/register">
+                                        <button className="btn btn-outline-light">Sign up</button>
+                                    </Link>
                                 </li>
                             </ul>
                         </div>
