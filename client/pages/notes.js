@@ -1,6 +1,6 @@
-import NotesPage from "../components/NotePage";
+import NotesPage from "../components/NotesPage";
 
-export default function Login() {
+export default function Notes() {
     return (
         <div>
             <NotesPage />

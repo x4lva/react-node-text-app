@@ -64,3 +64,9 @@ form a{
 .back-button:hover {
   cursor: pointer;
 }
+.app-section{
+  padding: 10px 10px;
+  margin-top: 10px;
+  background: #ffffff;
+  border-radius: 4px;
+}
