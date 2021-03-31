@@ -1,9 +1,9 @@
-import NotesPage from "../components/NotesPage";
+import NotePage from "../components/NotePage";
 
 export default function Note() {
     return (
         <div>
-            <NotesPage />
+            <NotePage />
         </div>
     )
 }

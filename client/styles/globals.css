@@ -192,3 +192,62 @@ textarea{
   border: none !important;
   box-shadow: none !important;
 }
+.note-sidebar{
+  width: 20%;
+  background: #96969630;
+}
+.note-content{
+  width: 80%;
+}
+.note{
+  min-height: 100vh;
+}
+.note-content-header-item{
+  display: flex;
+  justify-content: space-between;
+  color: #ffffff;
+  font-size: 18px;
+}
+.note-content-header{
+  background: #333;
+  padding-left: 25px !important;
+}
+.note-sidebar-header{
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: 700;
+  height: 42px;
+
+}
+.note-sidebar-header i{
+  padding: 0 10px;
+}
+.active-note{
+  background: #333333;
+  box-shadow: inset -2px 0px 0 0 #8c8080;
+
+}
+.note-sidebar-item-date{
+  font-size: 14px;
+}
+.note-sidebar-item:hover{
+  cursor: pointer;
+}
+.note-content-text{
+  color: #ffffff;
+}
+.editor-button{
+  border-radius: 4px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.editor-header {
+  background: #242424;
+  padding: 9px 0;
+}
+.text-justify{
+  text-align: justify!important;
+}

@@ -1,9 +1,9 @@
 import AppIndex from "../components/AppIndex/AppIndex";
 
 export default function Home() {
-  return (
-    <div>
-      <AppIndex />
-    </div>
-  )
+    return (
+        <div>
+            <AppIndex />
+        </div>
+    );
 }
