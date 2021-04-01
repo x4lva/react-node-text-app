@@ -15,9 +15,6 @@ a {
 * {
   box-sizing: border-box;
 }
-::-webkit-scrollbar{
-  width: 0;
-}
 .app-index-info{
   height: 300px;
 }
@@ -195,9 +192,11 @@ textarea{
 .note-sidebar{
   width: 20%;
   background: #96969630;
+  min-height: 100vh;
 }
 .note-content{
   width: 80%;
+  margin-left: 20%;
 }
 .note{
   min-height: 100vh;
@@ -250,4 +249,58 @@ textarea{
 }
 .text-justify{
   text-align: justify!important;
+}
+code {
+  color: #fff !important;
+  background: #ffffff73;
+  border-radius: 0px;
+  padding: 2px;
+}
+blockquote {
+  margin: 0 0 1rem 2px !important;
+  box-shadow: -2px 0px 0 0 #fff;
+  padding-left: 10px;
+}
+input.note-text {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  margin-bottom: 10px;
+  padding-left: 0;
+}
+
+input.note-text:focus {
+  outline: none;
+}
+.note-sidebar {
+  position: fixed;
+}
+.editor-header{
+  position: fixed;
+  width: 80%;
+  margin-left: 20%;
+  top: 0;
+  right: 0;
+}
+.note-editor{
+  margin-top: 60px;
+  height: 630px;
+  overflow-y: auto;
+}
+div[data-slate-editor="true"]{
+  height: 100%;
+}
+.note-editor::-webkit-scrollbar {
+  background: #242424;
+  width: 5px;
+  border-radius: 4px;
+
+}
+.note-editor::-webkit-scrollbar-thumb {
+  background: #fff;
+  border-radius: 4px;
+}
+.note-editor input[type="checkbox"]{
+  margin: 5px;
 }

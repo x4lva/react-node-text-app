@@ -1,10 +1,19 @@
 import React, { useCallback, useMemo, useState } from "react";
 import isHotkey from "is-hotkey";
-import { Editable, withReact, useSlate, Slate } from "slate-react";
+import {
+    Editable,
+    withReact,
+    useSlate,
+    Slate,
+    ReactEditor,
+    useSlateStatic,
+} from "slate-react";
 import {
     Editor,
     Transforms,
     createEditor,
+    Point,
+    Range,
     Element as SlateElement,
 } from "slate";
 import { css, cx } from "@emotion/css";
@@ -13,6 +22,7 @@ const HOTKEYS = {
     "mod+b": "bold",
     "mod+i": "italic",
     "mod+u": "underline",
+    "mod+s": "strike",
     "mod+`": "code",
 };
 
@@ -22,7 +32,7 @@ function NoteEditor(props) {
     const [value, setValue] = useState(initialValue);
     const renderElement = useCallback((props) => <Element {...props} />, []);
     const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
-    const editor = useMemo(() => withReact(createEditor()), []);
+    const editor = useMemo(() => withChecklists(withReact(createEditor())), []);
 
     console.log(value);
     return (
@@ -32,8 +42,8 @@ function NoteEditor(props) {
             onChange={(value) => setValue(value)}
         >
             <div className="d-flex flex-column w-100 align-items-center justify-content-center">
-                <div className="editor-header d-flex mb-3 w-100 justify-content-center">
-                    <div className="col-10 d-flex gap-3 ">
+                <div className="editor-header d-flex mb-3 justify-content-center">
+                    <div className="col-10 d-flex gap-3">
                         <MarkButton format="bold" icon="fas fa-bold" />
                         <MarkButton format="italic" icon="fas fa-italic" />
                         <MarkButton
@@ -45,6 +55,7 @@ function NoteEditor(props) {
                             icon="fas fa-strikethrough"
                         />
                         <MarkButton format="code" icon="fas fa-code" />
+                        <div className="note-editor-separator" />
                         <BlockButton
                             format="block-quote"
                             icon="fas fa-quote-right"
@@ -58,6 +69,11 @@ function NoteEditor(props) {
                             format="bulleted-list"
                             icon="fas fa-list-ul"
                         />
+                        <BlockButton
+                            format="checkbox"
+                            icon="fas fa-check-square"
+                        />
+                        <div className="note-editor-separator" />
                         <BlockButton
                             format="text-left"
                             icon="fas fa-align-left"
@@ -74,17 +90,23 @@ function NoteEditor(props) {
                             format="text-justify"
                             icon="fas fa-align-justify"
                         />
+                        <div className="note-editor-separator" />
                         <MarkButton format="sub" icon="fas fa-subscript" />
                         <MarkButton format="sup" icon="fas fa-superscript" />
                     </div>
                 </div>
-                <div className="col-10">
+                <div className="note-editor col-10 d-flex flex-column">
+                    <input
+                        className="note-text"
+                        type="text"
+                        placeholder="Id name"
+                    />
                     <Editable
                         renderElement={renderElement}
                         renderLeaf={renderLeaf}
-                        placeholder="Enter some rich text…"
-                        spellCheck
+                        placeholder="Id text"
                         autoFocus
+                        spellCheck="false"
                         onKeyDown={(event) => {
                             for (const hotkey in HOTKEYS) {
                                 if (isHotkey(hotkey, event)) {
@@ -100,6 +122,45 @@ function NoteEditor(props) {
         </Slate>
     );
 }
+
+const withChecklists = (editor) => {
+    const { deleteBackward } = editor;
+
+    editor.deleteBackward = (...args) => {
+        const { selection } = editor;
+
+        if (selection && Range.isCollapsed(selection)) {
+            const [match] = Editor.nodes(editor, {
+                match: (n) =>
+                    !Editor.isEditor(n) &&
+                    SlateElement.isElement(n) &&
+                    n.type === "check-list-item",
+            });
+
+            if (match) {
+                const [, path] = match;
+                const start = Editor.start(editor, path);
+
+                if (Point.equals(selection.anchor, start)) {
+                    const newProperties = {
+                        type: "paragraph",
+                    };
+                    Transforms.setNodes(editor, newProperties, {
+                        match: (n) =>
+                            !Editor.isEditor(n) &&
+                            SlateElement.isElement(n) &&
+                            n.type === "check-list-item",
+                    });
+                    return;
+                }
+            }
+        }
+
+        deleteBackward(...args);
+    };
+
+    return editor;
+};
 
 const toggleBlock = (editor, format) => {
     const isActive = isBlockActive(editor, format);
@@ -150,6 +211,8 @@ const isMarkActive = (editor, format) => {
 };
 
 const Element = ({ attributes, children, element }) => {
+    const editor = useSlateStatic();
+
     switch (element.type) {
         case "block-quote":
             return <blockquote {...attributes}>{children}</blockquote>;
@@ -163,6 +226,31 @@ const Element = ({ attributes, children, element }) => {
             return <li {...attributes}>{children}</li>;
         case "numbered-list":
             return <ol {...attributes}>{children}</ol>;
+        case "checkbox":
+            return (
+                <p
+                    className={css(
+                        `text-decoration: ${
+                            element.checked ? "line-through" : "none"
+                        }`
+                    )}
+                >
+                    <input
+                        onChange={(event) => {
+                            const path = ReactEditor.findPath(editor, element);
+                            const newProperties = {
+                                checked: event.target.checked,
+                            };
+                            Transforms.setNodes(editor, newProperties, {
+                                at: path,
+                            });
+                        }}
+                        {...attributes}
+                        type="checkbox"
+                    />
+                    {children}
+                </p>
+            );
         case "text-center":
             return (
                 <p className="text-center" {...attributes}>

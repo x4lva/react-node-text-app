@@ -1,8 +1,25 @@
-import '../styles/globals.css'
-import "../styles/bootstrap.min.css"
+import App from "next/app";
+import { Provider } from "react-redux";
+import React from "react";
 
-function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />
+class MyApp extends App {
+    static async getInitialProps({ Component, ctx }) {
+        const pageProps = Component.getInitialProps
+            ? await Component.getInitialProps(ctx)
+            : {};
+
+        return { pageProps: pageProps };
+    }
+
+    render() {
+        const { Component, pageProps } = this.props;
+
+        return (
+            <Provider store={}>
+                <Component {...pageProps} />
+            </Provider>
+        );
+    }
 }
 
-export default MyApp
+export default MyApp;
