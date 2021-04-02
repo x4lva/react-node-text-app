@@ -8,11 +8,19 @@ const Note = require("../schemas/Note");
 note.use(cors());
 
 note.post("/create", async (req, res) => {
-    console.log(req.body);
-
     const noteData = new Note({
         name: String(""),
-        data: [{ text: [], date: new Date() }],
+        data: [
+            {
+                text: [
+                    {
+                        type: "paragraph",
+                        children: [{ text: "" }],
+                    },
+                ],
+                date: new Date(),
+            },
+        ],
         deleted: false,
         public: false,
         published: false,
@@ -29,7 +37,17 @@ note.post("/create", async (req, res) => {
         });
 });
 
-note.get("/data/:id", async (req, res) => {});
+note.post("/data", async (req, res) => {
+    const { noteId } = req.body;
+
+    Note.findById(noteId)
+        .then((response) => {
+            res.status(200).json(response);
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+});
 
 note.post("/update", async (req, res) => {});
 

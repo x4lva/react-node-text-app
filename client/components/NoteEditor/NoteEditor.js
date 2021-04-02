@@ -17,6 +17,7 @@ import {
     Element as SlateElement,
 } from "slate";
 import { css, cx } from "@emotion/css";
+import { useSelector } from "react-redux";
 
 const HOTKEYS = {
     "mod+b": "bold",
@@ -28,8 +29,10 @@ const HOTKEYS = {
 
 const LIST_TYPES = ["numbered-list", "bulleted-list"];
 
-function NoteEditor(props) {
-    const [value, setValue] = useState(initialValue);
+function NoteEditor({ noteText }) {
+    const { noteData } = useSelector((state) => state.noteState);
+
+    const [value, setValue] = useState(noteData.data[0].text);
     const renderElement = useCallback((props) => <Element {...props} />, []);
     const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
     const editor = useMemo(() => withChecklists(withReact(createEditor())), []);
@@ -103,7 +106,7 @@ function NoteEditor(props) {
                     <Editable
                         renderElement={renderElement}
                         renderLeaf={renderLeaf}
-                        placeholder="Id text"
+                        placeholder="Note text"
                         autoFocus
                         spellCheck="false"
                         onKeyDown={(event) => {

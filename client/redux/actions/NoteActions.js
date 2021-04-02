@@ -2,6 +2,7 @@ import { UPDATE_NOTE_STATE } from "../types/NoteTypes";
 import { createNode } from "../../services/NoteService";
 import { getSession } from "next-auth/client";
 import Router from "next/router";
+import { updateUserState } from "./UserActions";
 
 export const updateNoteState = (payload) => {
     return {
@@ -21,4 +22,12 @@ export const createNodeAction = () => async (dispatch, getState) => {
         );
         Router.push("/note/" + res._id);
     });
+};
+
+export const setNoteData = (note) => (dispatch, getState) => {
+    dispatch(
+        updateNoteState({
+            noteData: note,
+        })
+    );
 };

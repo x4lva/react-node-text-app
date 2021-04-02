@@ -7,7 +7,17 @@ const initialState = {
         deleted: false,
         published: false,
         public: false,
-        text: [],
+        data: [
+            {
+                date: {},
+                text: [
+                    {
+                        type: "paragraph",
+                        children: [{ text: "" }],
+                    },
+                ],
+            },
+        ],
         author: "",
     },
 };

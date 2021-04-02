@@ -9,7 +9,7 @@ import { getNotes } from "../../services/NoteService";
 import { setUserNotes } from "../../redux/actions/UserActions";
 import { useDispatch } from "react-redux";
 
-function NotesPage(props) {
+export default function NotesPage() {
     const dispatch = useDispatch();
 
     const [notesLoading, setNotesLoading] = useState(true);
@@ -92,5 +92,3 @@ function NotesPage(props) {
         </div>
     );
 }
-
-export default NotesPage;

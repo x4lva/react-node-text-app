@@ -2,7 +2,7 @@ import AppIndex from "../components/AppIndex/AppIndex";
 import { useSession } from "next-auth/client";
 import NotesPage from "../components/NotesPage";
 
-function Home() {
+export default function Home({ notes }) {
     const [session, loading] = useSession();
 
     if (loading) {
@@ -15,5 +15,3 @@ function Home() {
 
     return <AppIndex />;
 }
-
-export default Home;
