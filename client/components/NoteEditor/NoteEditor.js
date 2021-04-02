@@ -34,7 +34,6 @@ function NoteEditor(props) {
     const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
     const editor = useMemo(() => withChecklists(withReact(createEditor())), []);
 
-    console.log(value);
     return (
         <Slate
             editor={editor}
@@ -99,7 +98,7 @@ function NoteEditor(props) {
                     <input
                         className="note-text"
                         type="text"
-                        placeholder="Id name"
+                        placeholder="Note name"
                     />
                     <Editable
                         renderElement={renderElement}

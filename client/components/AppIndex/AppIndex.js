@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import { signIn } from "next-auth/client";
 
 function AppIndex(props) {
     return (
@@ -12,16 +13,9 @@ function AppIndex(props) {
                     <div id="navbarNav">
                         <ul className="navbar-nav">
                             <li className="nav-item">
-                                <Link href="/login">
-                                    <button className="btn text-light me-2">
-                                        Sign in
-                                    </button>
-                                </Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link href="/register">
+                                <Link href="/signin?callbackUrl=http://localhost:3000/">
                                     <button className="btn btn-outline-light">
-                                        Sign up
+                                        Sign in
                                     </button>
                                 </Link>
                             </li>

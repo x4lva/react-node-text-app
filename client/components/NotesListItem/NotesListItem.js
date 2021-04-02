@@ -1,16 +1,25 @@
 import React from "react";
+import Link from "next/link";
+import moment from "moment";
 
-function NotesListItem(props) {
+function NotesListItem({ note }) {
+    const link = "/note/" + note._id;
     return (
-        <div className="notes-list-item shadow">
-            <div className="notes-list-item-content">
-                <div className="notes-list-item-title">Project plan</div>
-                <div className="notes-list-item-description">
-                    Create modern react app using apollo
+        <Link href={link}>
+            <div className="notes-list-item shadow">
+                <div className="notes-list-item-content">
+                    <div className="notes-list-item-title">
+                        {note.name === "" ? "Untitled" : note.name}
+                    </div>
+                    <div className="notes-list-item-description">
+                        Create modern react app using apollo
+                    </div>
+                </div>
+                <div className="notes-list-date">
+                    {moment(note.updatedAt).fromNow()}
                 </div>
             </div>
-            <div className="notes-list-date">19 minutes ago</div>
-        </div>
+        </Link>
     );
 }
 

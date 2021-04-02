@@ -1,12 +1,22 @@
 import NoteSidebarItem from "../NoteSidebarItem/NoteSidebarItem";
 import React from "react";
-
 import NoteEditor from "../NoteEditor/NoteEditor";
+import { useSelector } from "react-redux";
+import Link from "next/link";
 
 function NotePage(props) {
+    const store = useSelector((store) => store);
+
     return (
         <div className="note d-flex justify-content-between">
             <div className="note-sidebar">
+                <div className="note-sidebar-header">
+                    <Link href="/">
+                        <i className="fas fa-chevron-left" />
+                    </Link>
+                    <span>Notes</span>
+                    <i className="fas fa-bars" />
+                </div>
                 <div className="note-sidebar-list d-flex flex-column">
                     <NoteSidebarItem active={true} />
                     <NoteSidebarItem />

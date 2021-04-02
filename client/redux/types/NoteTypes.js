@@ -1,0 +1,1 @@
+export const UPDATE_NOTE_STATE = "UPDATE_NOTE_STATE";

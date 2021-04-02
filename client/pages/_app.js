@@ -1,25 +1,21 @@
-import App from "next/app";
+import "../styles/globals.css";
+import "../styles/bootstrap.min.css";
 import { Provider } from "react-redux";
 import React from "react";
+import withRedux from "next-redux-wrapper";
+import store from "../redux/store";
+import { Provider as SessionProvider } from "next-auth/client";
 
-class MyApp extends App {
-    static async getInitialProps({ Component, ctx }) {
-        const pageProps = Component.getInitialProps
-            ? await Component.getInitialProps(ctx)
-            : {};
-
-        return { pageProps: pageProps };
-    }
-
-    render() {
-        const { Component, pageProps } = this.props;
-
-        return (
-            <Provider store={}>
+function MyApp({ Component, pageProps }) {
+    return (
+        <SessionProvider session={pageProps.session}>
+            <Provider store={store}>
                 <Component {...pageProps} />
             </Provider>
-        );
-    }
+        </SessionProvider>
+    );
 }
 
-export default MyApp;
+const makeStore = () => store;
+
+export default withRedux(makeStore)(MyApp);
