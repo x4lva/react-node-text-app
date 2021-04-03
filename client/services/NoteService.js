@@ -24,9 +24,19 @@ export const getNotes = (userId) => {
 };
 
 export const getNoteData = (noteId) => {
-    console.log(noteId);
     return axios
         .post("http://localhost:5000/note/data", { noteId })
+        .then((res) => {
+            return res.data;
+        })
+        .catch((e) => {
+            console.log(e);
+        });
+};
+
+export const updateNoteText = (noteId, noteText) => {
+    return axios
+        .post("http://localhost:5000/note/update/text", { noteId, noteText })
         .then((res) => {
             return res.data;
         })

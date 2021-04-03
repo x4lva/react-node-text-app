@@ -1,17 +1,8 @@
 import NoteSidebarItem from "../NoteSidebarItem/NoteSidebarItem";
-import React, { useEffect } from "react";
+import React from "react";
 import NoteEditor from "../NoteEditor/NoteEditor";
 import Link from "next/link";
-import { useDispatch, useSelector } from "react-redux";
-import { setNoteData } from "../../redux/actions/NoteActions";
-
 function NotePage({ note }) {
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        dispatch(setNoteData(note));
-    }, []);
-
     return (
         <div className="note d-flex justify-content-between">
             <div className="note-sidebar">

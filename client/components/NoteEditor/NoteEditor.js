@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import isHotkey from "is-hotkey";
 import {
     Editable,
@@ -17,7 +17,12 @@ import {
     Element as SlateElement,
 } from "slate";
 import { css, cx } from "@emotion/css";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getNoteData, updateNoteText } from "../../services/NoteService";
+import { setNoteData } from "../../redux/actions/NoteActions";
+import Router, { useRouter } from "next/router";
+import { loadGetInitialProps } from "next/dist/next-server/lib/utils";
+import { set } from "immutable";
 
 const HOTKEYS = {
     "mod+b": "bold",
@@ -29,14 +34,46 @@ const HOTKEYS = {
 
 const LIST_TYPES = ["numbered-list", "bulleted-list"];
 
-function NoteEditor({ noteText }) {
+function NoteEditor() {
     const { noteData } = useSelector((state) => state.noteState);
+    const router = useRouter();
+    const dispatch = useDispatch();
 
-    const [value, setValue] = useState(noteData.data[0].text);
+    const [loading, setLoading] = useState(true);
+    const [value, setValue] = useState(
+        noteData.data[noteData.data.length - 1].text
+    );
+
+    useEffect(() => {
+        getNoteData(router.query.id).then((res) => {
+            setValue(res.data[res.data.length - 1].text);
+            setLoading(false);
+        });
+
+        const delayDebounceFn = setTimeout(() => {
+            console.log("123");
+            updateNoteText(router.query.id, value);
+        }, 500);
+
+        return () => clearTimeout(delayDebounceFn);
+    }, []);
+
+    useEffect(() => {
+        const delayDebounceFn = setTimeout(() => {
+            console.log("123");
+            updateNoteText(router.query.id, value);
+        }, 500);
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [value]);
+
     const renderElement = useCallback((props) => <Element {...props} />, []);
     const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
     const editor = useMemo(() => withChecklists(withReact(createEditor())), []);
 
+    if (loading) {
+        return <h1>Loading</h1>;
+    }
     return (
         <Slate
             editor={editor}
@@ -359,42 +396,5 @@ export const Button = React.forwardRef(
         />
     )
 );
-
-const initialValue = [
-    {
-        type: "paragraph",
-        children: [
-            { text: "This is editable " },
-            { text: "rich", bold: true },
-            { text: " text, " },
-            { text: "much", italic: true },
-            { text: " better than a " },
-            { text: "<textarea>", code: true },
-            { text: "!" },
-        ],
-    },
-    {
-        type: "paragraph",
-        children: [
-            {
-                text:
-                    "Since it's rich text, you can do things like turn a selection of text ",
-            },
-            { text: "bold", bold: true },
-            {
-                text:
-                    ", or add a semantically rendered block quote in the middle of the page, like this:",
-            },
-        ],
-    },
-    {
-        type: "block-quote",
-        children: [{ text: "A wise quote." }],
-    },
-    {
-        type: "paragraph",
-        children: [{ text: "Try it out for yourself!" }],
-    },
-];
 
 export default NoteEditor;

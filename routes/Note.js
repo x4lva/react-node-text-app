@@ -51,7 +51,22 @@ note.post("/data", async (req, res) => {
 
 note.post("/update", async (req, res) => {});
 
-note.post("/update/text", async (req, res) => {});
+note.post("/update/text", async (req, res) => {
+    const { noteId, noteText } = req.body;
+    console.log(noteId, noteText);
+
+    const updateData = {
+        text: noteText,
+        date: new Date(),
+    };
+
+    Note.findOneAndUpdate(
+        { _id: noteId },
+        { $push: { data: updateData } }
+    ).then((response) => {
+        console.log(response._id);
+    });
+});
 
 note.post("/delete", async (req, res) => {});
 
