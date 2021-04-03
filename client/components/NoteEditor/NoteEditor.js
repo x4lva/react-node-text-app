@@ -18,12 +18,9 @@ import {
 } from "slate";
 import { css, cx } from "@emotion/css";
 import { useDispatch, useSelector } from "react-redux";
-import { getNoteData, updateNoteText } from "../../services/NoteService";
-import { setNoteData } from "../../redux/actions/NoteActions";
-import Router, { useRouter } from "next/router";
-import { loadGetInitialProps } from "next/dist/next-server/lib/utils";
+import { useRouter } from "next/router";
+import firebase from "../../utils/Firebase";
 import { set } from "immutable";
-
 const HOTKEYS = {
     "mod+b": "bold",
     "mod+i": "italic",
@@ -35,33 +32,42 @@ const HOTKEYS = {
 const LIST_TYPES = ["numbered-list", "bulleted-list"];
 
 function NoteEditor() {
-    const { noteData } = useSelector((state) => state.noteState);
-    const router = useRouter();
-    const dispatch = useDispatch();
-
     const [loading, setLoading] = useState(true);
-    const [value, setValue] = useState(
-        noteData.data[noteData.data.length - 1].text
-    );
+    const router = useRouter();
+    const [noteName, setNoteName] = useState("");
+
+    const [value, setValue] = useState([
+        {
+            type: "paragraph",
+            children: [{ text: "" }],
+        },
+    ]);
 
     useEffect(() => {
-        getNoteData(router.query.id).then((res) => {
-            setValue(res.data[res.data.length - 1].text);
-            setLoading(false);
+        const db = firebase.database().ref(`notes/${router.query.id}`);
+
+        db.once("value").then((snapshot) => {
+            if (snapshot.val()) {
+                let keys = [];
+                for (const [key, value] of Object.entries(
+                    snapshot.val().data
+                )) {
+                    keys.push(value);
+                }
+                setValue(keys[keys.length - 1].text);
+                setNoteName(snapshot.val().name);
+                setLoading(false);
+            }
         });
-
-        const delayDebounceFn = setTimeout(() => {
-            console.log("123");
-            updateNoteText(router.query.id, value);
-        }, 500);
-
-        return () => clearTimeout(delayDebounceFn);
-    }, []);
+    }, [router.query.id]);
 
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
-            console.log("123");
-            updateNoteText(router.query.id, value);
+            const db = firebase.database().ref(`notes/${router.query.id}`);
+            db.child("data").push({
+                date: new Date().toUTCString(),
+                text: value,
+            });
         }, 500);
 
         return () => clearTimeout(delayDebounceFn);
@@ -71,14 +77,21 @@ function NoteEditor() {
     const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
     const editor = useMemo(() => withChecklists(withReact(createEditor())), []);
 
+    const onNoteNameChange = (e) => {
+        const db = firebase.database().ref(`notes/${router.query.id}`);
+        db.child("name").set(e.target.value);
+        setNoteName(e.target.value);
+    };
+
     if (loading) {
-        return <h1>Loading</h1>;
+        return <h1>LOADING</h1>;
     }
+
     return (
         <Slate
             editor={editor}
             value={value}
-            onChange={(value) => setValue(value)}
+            onChange={(newValue) => setValue(newValue)}
         >
             <div className="d-flex flex-column w-100 align-items-center justify-content-center">
                 <div className="editor-header d-flex mb-3 justify-content-center">
@@ -136,6 +149,8 @@ function NoteEditor() {
                 </div>
                 <div className="note-editor col-10 d-flex flex-column">
                     <input
+                        value={noteName}
+                        onChange={onNoteNameChange}
                         className="note-text"
                         type="text"
                         placeholder="Note name"
@@ -275,6 +290,7 @@ const Element = ({ attributes, children, element }) => {
                     )}
                 >
                     <input
+                        checked={element.checked}
                         onChange={(event) => {
                             const path = ReactEditor.findPath(editor, element);
                             const newProperties = {

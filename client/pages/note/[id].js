@@ -8,18 +8,7 @@ import { setNoteData } from "../../redux/actions/NoteActions";
 export default function Id(props) {
     return (
         <div>
-            <NotePage note={props.note} />
+            <NotePage />
         </div>
     );
-}
-export async function getServerSideProps(context) {
-    const data = await getNoteData(context.params.id);
-
-    const note = await data;
-
-    return {
-        props: {
-            note,
-        },
-    };
 }

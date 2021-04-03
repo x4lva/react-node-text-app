@@ -3,7 +3,9 @@ import Link from "next/link";
 import moment from "moment";
 
 function NotesListItem({ note }) {
-    const link = "/note/" + note._id;
+    const link = "/note/" + note.key;
+
+    note = note.val();
     return (
         <Link href={link}>
             <div className="notes-list-item shadow">
