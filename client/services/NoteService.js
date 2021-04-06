@@ -1,7 +1,6 @@
 import axios from "axios";
 
 export const createNode = (userId) => {
-    console.log(userId);
     return axios
         .post("http://localhost:5000/note/create", { userId })
         .then((res) => {
@@ -38,7 +37,21 @@ export const updateNoteText = (noteId, noteText) => {
     return axios
         .post("http://localhost:5000/note/update/text", { noteId, noteText })
         .then((res) => {
-            return res.data;
+            return res;
+        })
+        .catch((e) => {
+            console.log(e);
+        });
+};
+
+export const updateNoteData = (noteId, noteData) => {
+    return axios
+        .post("http://localhost:5000/note/update", {
+            noteId,
+            noteData,
+        })
+        .then((res) => {
+            return res;
         })
         .catch((e) => {
             console.log(e);

@@ -9,13 +9,8 @@ const initialState = {
         public: false,
         data: [
             {
-                date: {},
-                text: [
-                    {
-                        type: "paragraph",
-                        children: [{ text: "" }],
-                    },
-                ],
+                type: "paragraph",
+                children: [{ text: "" }],
             },
         ],
         author: "",

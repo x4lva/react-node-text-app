@@ -8,7 +8,7 @@ const NoteSchema = new Schema(
             default: "",
         },
         data: {
-            type: [{ text: Array, date: Date }],
+            type: Array,
             required: true,
         },
         deleted: {

@@ -7,8 +7,6 @@ const initialState = {
         email: "",
         password: "",
     },
-    userConnectBoardId: "",
-    userToken: null,
     userNotes: [],
 };
 

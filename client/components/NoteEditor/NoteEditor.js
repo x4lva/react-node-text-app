@@ -18,9 +18,16 @@ import {
 } from "slate";
 import { css, cx } from "@emotion/css";
 import { useDispatch, useSelector } from "react-redux";
+import {
+    getNoteData,
+    getNotes,
+    updateNoteData,
+    updateNoteText,
+} from "../../services/NoteService";
 import { useRouter } from "next/router";
-import firebase from "../../utils/Firebase";
-import { set } from "immutable";
+import { useSession } from "next-auth/client";
+import { setUserNotes, updateUserNote } from "../../redux/actions/UserActions";
+
 const HOTKEYS = {
     "mod+b": "bold",
     "mod+i": "italic",
@@ -32,66 +39,62 @@ const HOTKEYS = {
 const LIST_TYPES = ["numbered-list", "bulleted-list"];
 
 function NoteEditor() {
-    const [loading, setLoading] = useState(true);
+    const { noteData } = useSelector((state) => state.noteState);
+    const { userNotes } = useSelector((store) => store.userState);
     const router = useRouter();
+    const renderElement = useCallback((props) => <Element {...props} />, []);
+    const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
+    const editor = useMemo(() => withChecklists(withReact(createEditor())), []);
     const [noteName, setNoteName] = useState("");
-
-    const [value, setValue] = useState([
-        {
-            type: "paragraph",
-            children: [{ text: "" }],
-        },
-    ]);
+    const [save, setSave] = useState(false);
+    const [value, setValue] = useState(noteData.data);
+    const dispatch = useDispatch();
 
     useEffect(() => {
-        const db = firebase.database().ref(`notes/${router.query.id}`);
-
-        db.once("value").then((snapshot) => {
-            if (snapshot.val()) {
-                let keys = [];
-                for (const [key, value] of Object.entries(
-                    snapshot.val().data
-                )) {
-                    keys.push(value);
-                }
-                setValue(keys[keys.length - 1].text);
-                setNoteName(snapshot.val().name);
-                setLoading(false);
+        getNoteData(router.query.id).then((res) => {
+            if (res) {
+                setNoteName(res.name);
+                setValue(res.data);
             }
         });
     }, [router.query.id]);
 
     useEffect(() => {
+        setSave(true);
         const delayDebounceFn = setTimeout(() => {
-            const db = firebase.database().ref(`notes/${router.query.id}`);
-            db.child("data").push({
-                date: new Date().toUTCString(),
-                text: value,
+            updateNoteText(router.query.id, value).then((res) => {
+                if (res.status === 200) {
+                    setSave(false);
+                    dispatch(updateUserNote(router.query.id, { data: value }));
+                }
             });
-        }, 500);
+        }, 700);
 
         return () => clearTimeout(delayDebounceFn);
     }, [value]);
 
-    const renderElement = useCallback((props) => <Element {...props} />, []);
-    const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
-    const editor = useMemo(() => withChecklists(withReact(createEditor())), []);
-
     const onNoteNameChange = (e) => {
-        const db = firebase.database().ref(`notes/${router.query.id}`);
-        db.child("name").set(e.target.value);
         setNoteName(e.target.value);
+        dispatch(updateUserNote(router.query.id, { name: e.target.value }));
+        updateNoteData(router.query.id, {
+            name: e.target.value,
+        });
     };
-
-    if (loading) {
-        return <h1>LOADING</h1>;
-    }
 
     return (
         <Slate
             editor={editor}
             value={value}
-            onChange={(newValue) => setValue(newValue)}
+            onChange={(newValue) => {
+                if (newValue !== value) {
+                    dispatch(
+                        updateUserNote(router.query.id, {
+                            updatedAt: new Date().toUTCString(),
+                        })
+                    );
+                }
+                setValue(newValue);
+            }}
         >
             <div className="d-flex flex-column w-100 align-items-center justify-content-center">
                 <div className="editor-header d-flex mb-3 justify-content-center">
@@ -155,6 +158,7 @@ function NoteEditor() {
                         type="text"
                         placeholder="Note name"
                     />
+                    {save ? "Text is Saving" : "Saved"}
                     <Editable
                         renderElement={renderElement}
                         renderLeaf={renderLeaf}
@@ -290,7 +294,6 @@ const Element = ({ attributes, children, element }) => {
                     )}
                 >
                     <input
-                        checked={element.checked}
                         onChange={(event) => {
                             const path = ReactEditor.findPath(editor, element);
                             const newProperties = {

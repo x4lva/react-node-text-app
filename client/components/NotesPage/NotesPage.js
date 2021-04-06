@@ -8,28 +8,16 @@ import { signOut, useSession } from "next-auth/client";
 import { getNotes } from "../../services/NoteService";
 import { setUserNotes } from "../../redux/actions/UserActions";
 import { useDispatch } from "react-redux";
-import firebase from "../../utils/Firebase";
-import { useRouter } from "next/router";
 
 export default function NotesPage() {
-    const router = useRouter();
     const dispatch = useDispatch();
 
     const [notesLoading, setNotesLoading] = useState(true);
     const [session, loading] = useSession();
 
     useEffect(() => {
-        const db = firebase.database().ref("notes");
-
-        db.once("value").then((snapshot) => {
-            let notes = [];
-            snapshot.forEach((el) => {
-                if (el.val().author === session.id) {
-                    notes.push(el);
-                }
-            });
-            console.log(notes);
-            dispatch(setUserNotes(notes));
+        getNotes(session.id).then((res) => {
+            dispatch(setUserNotes(res));
             setNotesLoading(false);
         });
     }, []);

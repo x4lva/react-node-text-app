@@ -1,8 +1,29 @@
 import NoteSidebarItem from "../NoteSidebarItem/NoteSidebarItem";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import NoteEditor from "../NoteEditor/NoteEditor";
 import Link from "next/link";
+import NoteSidebarList from "../NoteSidebarList/NoteSidebarList";
+import { getNotes } from "../../services/NoteService";
+import { setUserNotes } from "../../redux/actions/UserActions";
+import { useDispatch, useSelector } from "react-redux";
+import { useSession } from "next-auth/client";
+import { useRouter } from "next/router";
 function NotePage({ note }) {
+    const dispatch = useDispatch();
+    const router = useRouter();
+
+    const [notesLoading, setNotesLoading] = useState(true);
+    const [session, loading] = useSession();
+
+    useEffect(() => {
+        if (!loading) {
+            getNotes(session.id).then((res) => {
+                dispatch(setUserNotes(res));
+                setNotesLoading(false);
+            });
+        }
+    });
+
     return (
         <div className="note d-flex justify-content-between">
             <div className="note-sidebar">
@@ -14,11 +35,7 @@ function NotePage({ note }) {
                     <i className="fas fa-bars" />
                 </div>
                 <div className="note-sidebar-list d-flex flex-column">
-                    <NoteSidebarItem active={true} />
-                    <NoteSidebarItem />
-                    <NoteSidebarItem />
-                    <NoteSidebarItem />
-                    <NoteSidebarItem />
+                    <NoteSidebarList />
                 </div>
             </div>
             <div className="note-content">

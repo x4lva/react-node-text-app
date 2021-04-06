@@ -196,7 +196,9 @@ textarea{
 .note-sidebar{
   width: 20%;
   background: #96969630;
-  min-height: 100vh;
+  position: fixed;
+  overflow: scroll;
+  height: 100%;
 }
 .note-content{
   width: 80%;
@@ -322,4 +324,12 @@ div[data-slate-editor="true"]{
 }
 .app-form button:last-child{
   margin-bottom: 0!important;
+}
+.note-sidebar-item-description{
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.note-sidebar-item-header {
+  word-break: break-all;
 }

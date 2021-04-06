@@ -12,13 +12,8 @@ note.post("/create", async (req, res) => {
         name: String(""),
         data: [
             {
-                text: [
-                    {
-                        type: "paragraph",
-                        children: [{ text: "" }],
-                    },
-                ],
-                date: new Date(),
+                type: "paragraph",
+                children: [{ text: "" }],
             },
         ],
         deleted: false,
@@ -29,7 +24,6 @@ note.post("/create", async (req, res) => {
 
     Note.create(noteData)
         .then((response) => {
-            console.log(response);
             res.status(200).json(response);
         })
         .catch((err) => {
@@ -49,23 +43,26 @@ note.post("/data", async (req, res) => {
         });
 });
 
-note.post("/update", async (req, res) => {});
+note.post("/update", async (req, res) => {
+    const { noteData, noteId } = req.body;
+
+    console.log(noteData, noteId);
+    Note.findOneAndUpdate({ _id: noteId }, { ...noteData }).then((response) => {
+        console.log(response);
+        res.status(200).json({});
+    });
+});
 
 note.post("/update/text", async (req, res) => {
     const { noteId, noteText } = req.body;
-    console.log(noteId, noteText);
 
-    const updateData = {
-        text: noteText,
-        date: new Date(),
-    };
-
-    Note.findOneAndUpdate(
-        { _id: noteId },
-        { $push: { data: updateData } }
-    ).then((response) => {
-        console.log(response._id);
-    });
+    Note.findOneAndUpdate({ _id: noteId }, { data: noteText })
+        .then((response) => {
+            res.status(200).json({ message: "Saved" });
+        })
+        .catch((err) => {
+            console.log(err);
+        });
 });
 
 note.post("/delete", async (req, res) => {});
