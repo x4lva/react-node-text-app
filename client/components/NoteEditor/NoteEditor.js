@@ -303,6 +303,7 @@ const Element = ({ attributes, children, element }) => {
                                 at: path,
                             });
                         }}
+                        checked={element.checked ? "checked" : ""}
                         {...attributes}
                         type="checkbox"
                     />
